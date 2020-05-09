@@ -1,0 +1,41 @@
+<!doctype html>
+<html  class="x-admin-sm">
+{include file="common/head"}
+<link rel="stylesheet" href="__ADMIN__/css/login.css">
+<body class="login-bg">
+    
+    <div class="login layui-anim layui-anim-up">
+        <div class="message">XXX后台管理-后台登录验证</div>
+        <div id="darkbannerwrap"></div>
+        
+        <form method="post" class="layui-form" >
+            <input name="username" placeholder="用户名"  type="text" lay-verify="required" class="layui-input" >
+            <hr class="hr15">
+            <input name="password" lay-verify="required" placeholder="密码"  type="password" class="layui-input">
+            <hr class="hr15">
+            <input value="登录" lay-submit lay-filter="login" style="width:100%;" type="submit">
+            <hr class="hr20" >
+        </form>
+    </div>
+
+    <script>
+        $(function  () {
+            layui.use('form', function(){
+              var form = layui.form;
+              //监听提交
+              form.on('submit(login)', function(data){
+                  var data = data.field;
+                  console.log(data);
+                  /*提交表单信息*/
+                  $.post("/api/v1/login/checkLogin",{data:data},function(){
+
+                  });
+                return false;
+              });
+            });
+        })
+    </script>
+    <!-- 底部结束 -->
+
+</body>
+</html>

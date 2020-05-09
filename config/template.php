@@ -1,4 +1,10 @@
 <?php
+/*
+ * @Descripttion: 
+ * @Author: Jason
+ * @Date: 2020-03-30 15:49:12
+ * @LastEditTime: 2020-03-30 15:49:21
+ */
 // +----------------------------------------------------------------------
 // | ThinkPHP [ WE CAN DO IT JUST THINK ]
 // +----------------------------------------------------------------------
@@ -32,4 +38,16 @@ return [
     'taglib_begin' => '{',
     // 标签库标签结束标记
     'taglib_end'   => '}',
+    
+    //模板输出替换
+    'tpl_replace_string'  =>  [
+        '__ROOT__' => '/',
+        '__ADMIN__'=>'/static/admin',
+        '__HOME__' => '/static/home',
+        '__WAP__' => '/static/wap',
+        '__EDITOR__' => '/static/editor',
+        '__ERROR__' => '/static/error',
+        "__COMMON__"=>'/static/common',
+    ],
+
 ];

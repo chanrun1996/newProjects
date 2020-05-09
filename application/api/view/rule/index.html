@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+{include file="common/head"}
+    <body>
+        <div class="x-nav">
+          <span class="layui-breadcrumb">
+            <a href="">后台管理</a>
+            <a href="">权限</a>
+            <a>
+              <cite>权限管理</cite></a>
+          </span>
+          <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" onclick="location.reload()" title="刷新">
+            <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i></a>
+        </div>
+        <div class="layui-fluid">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-body ">
+                        <div class="layui-card-header">
+                            <button class="layui-btn layui-btn-danger" onclick="xadmin.open('添加权限','/api/v1/rule/add',500,450)">
+                                <i class="layui-icon"></i>
+                                添加权限
+                            </button>
+                            <button class="layui-btn layui-btn-danger delAll_btn" ><i class="layui-icon"></i>批量删除</button>
+                        </div>
+                        <div class="layui-card-body ">
+                            <table class="layui-table layui-form" lay-filter="rules" id="rules">
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <script type="text/html" id="rule_name">
+            <span>{{d.html}}{{d.rule_name}}</span>
+        </script>
+        <script type="text/html" id="menu_status">
+
+            <input type="checkbox" name="menu_status" value="{{d.id}}"  lay-skin="switch"
+                   lay-text="是|否" lay-filter="top" {{ d.menu_status == 1 ? 'checked' : '' }}>
+        </script>
+        <script type="text/html" id="barDemo">
+            <a class="layui-btn layui-btn-xs" lay-event="edit" onclick="xadmin.open('修改权限','/api/v1/rule/add?id={{d.id}}',500,450)">编辑</a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+        </script>
+
+    </body>
+<script>
+    layui.use(['form','jquery','table'], function() {
+        form = layui.form
+            , layedit = layui.layedit
+            , laydate = layui.laydate;
+        $ = layui.jquery;
+        var table = layui.table;
+        //第一个实例
+        table.render({
+            elem: '#rules'
+            , height: 700
+            , url: '/api/v1/rule/index' //数据接口
+
+            , cols: [[ //表头
+                {type: 'checkbox', fixed: 'left'}
+                , {field: 'id', title: 'ID', width: "5%", sort: true, fixed: 'left', align: 'center'}
+                , {field: 'rule_name', title: '权限名称', templet: "#rule_name", width: "25%"}
+                , {field: 'rule_url', title: '权限规则', width: "25%", align: 'center'}
+                , {field: 'menu_status', title: '菜单显示', width: "15%", templet: "#menu_status", align: 'center'}
+                , {
+                    field: 'menu_status',
+                    title: '数据操作',
+                    width: "25%",
+                    templet: "#barDemo",
+                    fixed: 'right',
+                    align: 'center'
+                }
+            ]]
+        });
+
+        //复选框删除
+        $(".delAll_btn").click(function () {
+            var checkStatus = table.checkStatus("rules"),
+                data = checkStatus.data,
+                employeesId = "";
+
+            if (data.length > 0) {
+                for (var i in data) {
+                    employeesId += data[i].id + ",";
+
+                }
+                layer.confirm("确定删除选中的数据？", {icon: 2, title: "提示信息"}, function (index) {
+                    $.ajax({
+                        url: "/api/v1/rule/del",
+                        type: "Post",
+                        data: {ids: employeesId},
+                        dataType: "json",
+                        success: function (res) {
+
+                            if (res.code == 200) {
+                                layer.msg(res.msg);
+                                table.reload('rules', {});
+                            } else {
+                                layer.msg(res.msg);
+                            }
+                        }
+                    })
+                });
+            } else {
+                layer.msg("请选择需要删除的数据");
+            }
+        });
+
+        //单删除
+        table.on('tool(rules)', function (obj) {
+            var data = obj.data;
+            // console.log(obj)
+            if (obj.event === 'del') {
+                layer.confirm('确定要删除该条数据么', function (index) {
+                    $.ajax({
+                        url: "{:url('/api/v1/rule/del')}?id="+data.id,
+                        type: "post",
+                        success: function (data) {
+                            if (data.code == 200) {
+                                layer.msg(data.msg, {icon: 1000}, function () {
+                                    layer.close(index);
+                                    table.reload('rules', {});
+                                });
+                            } else {
+                                layer.msg(data.msg, {icon: 1});
+                            }
+                        }
+                    })
+
+                });
+            }
+        });
+
+    });
+</script>
+
+</html>
